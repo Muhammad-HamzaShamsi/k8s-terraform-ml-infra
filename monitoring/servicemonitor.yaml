@@ -1,0 +1,16 @@
+# Picked up by kube-prometheus-stack (release label must match the Helm release name)
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: model-api
+  namespace: ml-serving
+  labels:
+    release: monitoring
+spec:
+  selector:
+    matchLabels:
+      app: model-api
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 15s

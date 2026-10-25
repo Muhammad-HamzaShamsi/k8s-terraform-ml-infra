@@ -1,0 +1,17 @@
+# helm upgrade --install monitoring prometheus-community/kube-prometheus-stack \
+#   -n monitoring --create-namespace -f monitoring/kube-prometheus-stack-values.yaml
+grafana:
+  adminPassword: change-me   # use a Secret / external secrets in real environments
+  defaultDashboardsTimezone: browser
+prometheus:
+  prometheusSpec:
+    retention: 7d
+    # discover ServiceMonitors/PrometheusRules from all namespaces with release=monitoring
+    serviceMonitorSelector:
+      matchLabels:
+        release: monitoring
+    ruleSelector:
+      matchLabels:
+        release: monitoring
+alertmanager:
+  enabled: true
