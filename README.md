@@ -85,7 +85,7 @@ git clone https://github.com/Muhammad-HamzaShamsi/k8s-terraform-ml-infra.git
 cd k8s-terraform-ml-infra
 cp terraform/terraform.tfvars.example terraform/terraform.tfvars   # adjust region/sizing
 
-./scripts/bootstrap.sh     # ~15–20 min: VPC + EKS + add-ons + model API
+bash scripts/bootstrap.sh   # ~15–20 min: VPC + EKS + add-ons + model API
 ```
 
 Step by step instead:
@@ -120,7 +120,7 @@ kubectl -n monitoring port-forward svc/monitoring-grafana 3000:80   # http://loc
 | Node capacity | Spot | On-Demand |
 | ECR / S3 `force_delete` | enabled | disabled |
 
-> ⚠️ EKS, NAT gateways and load balancers cost money. Run `./scripts/destroy.sh` when you are done experimenting.
+> ⚠️ EKS, NAT gateways and load balancers cost money. Run `bash scripts/destroy.sh` when you are done experimenting.
 
 ## Roadmap
 
