@@ -1,0 +1,48 @@
+name: Infra CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: terraform
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.8
+      - name: terraform fmt
+        run: terraform fmt -check -recursive -diff
+      - name: terraform init (no backend)
+        run: terraform init -backend=false
+      - name: terraform validate
+        run: terraform validate
+
+  kubernetes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install kubeconform
+        run: |
+          curl -sSL https://github.com/yannh/kubeconform/releases/download/v0.6.7/kubeconform-linux-amd64.tar.gz \
+            | sudo tar xz -C /usr/local/bin kubeconform
+      - name: Validate manifests
+        run: |
+          kubectl kustomize k8s > /tmp/rendered.yaml
+          kubeconform -strict -summary -kubernetes-version 1.31.0 /tmp/rendered.yaml
+          kubeconform -summary -ignore-missing-schemas \
+            -schema-location default \
+            -schema-location 'https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json' \
+            monitoring/servicemonitor.yaml monitoring/alerts.yaml
+
+  scripts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: ShellCheck
+        run: shellcheck scripts/*.sh
