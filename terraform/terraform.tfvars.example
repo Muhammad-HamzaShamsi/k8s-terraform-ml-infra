@@ -1,0 +1,6 @@
+project             = "ml-platform"
+environment         = "dev"
+region              = "eu-central-1"
+kubernetes_version  = "1.31"
+node_instance_types = ["t3.large"]
+node_desired_size   = 2
